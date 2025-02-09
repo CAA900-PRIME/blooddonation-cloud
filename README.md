@@ -16,10 +16,10 @@ git clone git@github.com:CAA900-PRIME/blooddonation-cloud.git
 ```
 
 >[!IMPORTANT]
-Please ensure:
-1. Install Azure CLI. [Windows](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?pivots=winget) and [macOS](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
-2. Configure Azure locally and ensure connectin to the azure api.
-3. Azure CLI [Documentation](https://learn.microsoft.com/en-us/cli/azure/)
+>Please ensure:
+>1. Install Azure CLI. [Windows](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?pivots=winget) and [macOS](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-macos)
+>2. Configure Azure locally and ensure connectin to the azure api.
+>3. Azure CLI [Documentation](https://learn.microsoft.com/en-us/cli/azure/)
 
 Change the working directory to `terrform/` 
 
