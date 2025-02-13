@@ -21,6 +21,11 @@ git clone git@github.com:CAA900-PRIME/blooddonation-cloud.git
 >2. Configure Azure locally and ensure connectin to the azure api.
 >3. Azure CLI [Documentation](https://learn.microsoft.com/en-us/cli/azure/)
 
+Generate SSH key 
+```bash
+ssh-keygen -t rsa -b 4096 -f C:\Users\User\terraform-azure\id_rsa
+```
+
 Change the working directory to `terrform/` 
 
 ```bash
@@ -44,7 +49,10 @@ And to apply the changes required to reach the desired state defined in the conf
 ```bash
 terraform apply --auto-approve
 ```
-
+Connect to Azure VM
+```bash
+ssh -i C:\Users\User\terraform-azure\id_rsa azureuser@<your-vm-public-ip>
+```
 Here are other terraform list of commands:
 1. `terraform validate` validates the configuration files for syntax errors.
 2. `terraform fmt` Formatting the file.
