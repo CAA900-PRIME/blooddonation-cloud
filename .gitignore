@@ -21,6 +21,9 @@ crash.log
 Thumbs.db
 Desktop.ini
 
+.pub
+
+
 # Editor-specific files
 # VSCode
 .vscode/

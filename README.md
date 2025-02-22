@@ -23,7 +23,23 @@ git clone git@github.com:CAA900-PRIME/blooddonation-cloud.git
 
 Generate SSH key 
 ```bash
-ssh-keygen -t rsa -b 4096 -f C:\Users\User\terraform-azure\id_rsa
+ssh-keygen -t rsa -b 4096 -f ./bd_key
+```
+
+Will also need to login to Azure using Azure CLI before using terraform. To login using azure cli:
+
+```bash
+az login
+```
+
+A web page will open in a new tab, must login manually. Next, will need to modify the subscription id within 
+
+```terraform 
+# Configure the Microsoft Azure Provider
+provider "azurerm" {
+  features {}
+  subscription_id = "" # Must be provided
+}
 ```
 
 Change the working directory to `terrform/` 
@@ -50,13 +66,25 @@ And to apply the changes required to reach the desired state defined in the conf
 terraform apply --auto-approve
 ```
 Connect to Azure VM
+
 ```bash
-ssh -i C:\Users\User\terraform-azure\id_rsa azureuser@<your-vm-public-ip>
+ssh -i bd_key ubuntu@ip-address
 ```
-Here are other terraform list of commands:
-1. `terraform validate` validates the configuration files for syntax errors.
-2. `terraform fmt` Formatting the file.
-3. `terraform destroy` Destroyes all the resources managed by the current configuration.
+
+After loging in, will start the following servers:
+1. Running mysql through docker.
+2. Running the backend
+3. Running the frontend
+
+Will ues [tmux](https://github.com/tmux/tmux/wiki) to manage and run all server processes in detached sessions, ensuring that they continue running even if the connection is lost.
+
+##### Terraform list of commands:
+1. `terraform init` Initialize terraform
+2. `terraform plan` Show what its going to be built before applying the changes.
+3. `terraform apply --auto-approve` Apply the changes to the cloud.
+4. `terraform validate` validates the configuration files for syntax errors.
+5. `terraform fmt` Formatting the file.
+6. `terraform destroy` Destroyes all the resources managed by the current configuration.
 
 ## Current plan
 
