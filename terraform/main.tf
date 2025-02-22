@@ -62,7 +62,7 @@ resource "azurerm_linux_virtual_machine" "test" {
   location              = azurerm_resource_group.test.location
   resource_group_name   = azurerm_resource_group.test.name
   network_interface_ids = [azurerm_network_interface.test.id]
-  size                  = "Standard_B1s"
+  size                  = "Standard_B2s"
 
   os_disk {
     caching              = "ReadWrite"
@@ -95,7 +95,7 @@ resource "azurerm_linux_virtual_machine" "test" {
       "sudo apt-get install -y vim",
       "sudo apt-get install -y tmux",
       "sudo apt install -y python3 python3-pip python3-venv python3-dev",
-      "sudo apt-get install nodejs",
+      "sudo apt-get install -y nodejs",
       "echo 'export TERM=xterm-256color' >> ~/.bashrc", # To enable tmux
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
