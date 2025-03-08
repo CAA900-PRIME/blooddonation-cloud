@@ -3,6 +3,9 @@ This web application is designed to simplify blood donation by directly connecti
 
 The goal is to make the donation process faster and more efficient, reducing the time involved in finding a suitable donor. The platform prioritizes simplicity, ensuring a user-friendly experience with minimal steps.
 
+### Topology
+![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/topology.jpg)
+
 ## Prerequisites
 - [Terraform](https://www.terraform.io/downloads.html) installed
 - Cloud provider credentials set up (e.g., AWS, GCP, Azure)
