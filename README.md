@@ -14,6 +14,9 @@ The goal is to make the donation process faster and more efficient, reducing the
 
 First will have to clone this repository
 
+>[!NOTE]
+>For nginx setup instructions go [here](https://github.com/CAA900-PRIME/blooddonation-cloud/tree/main/nginx)
+
 ```bash
 git clone git@github.com:CAA900-PRIME/blooddonation-cloud.git
 ```

@@ -95,8 +95,11 @@ resource "azurerm_linux_virtual_machine" "test" {
       "sudo apt-get install -y vim",
       "sudo apt-get install -y tmux",
       "sudo apt install -y python3 python3-pip python3-venv python3-dev",
-      "sudo apt-get install -y nodejs",
+      "sudo apt install -y nginx",
+      "sudo apt-get install -y npm",
       "echo 'export TERM=xterm-256color' >> ~/.bashrc", # To enable tmux
+      "sudo systemctl start nginx",
+      "sudo systemctl enable nginx",
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
       "sudo usermod -aG docker ubuntu"
