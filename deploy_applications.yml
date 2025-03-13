@@ -1,0 +1,106 @@
+---
+- name: Deploy Applications on Azure VM
+  hosts: azure
+  become: yes
+  vars:
+    NODEJS_VERSION: "8"
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+    
+    - name: Install the nodejs
+      apt:
+        name: nodejs
+        state: present
+    
+    - name: Install the nodejs
+      apt:
+        name: npm
+        state: present
+
+    - name: Ensure Docker service is started
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Clone frontend repository
+      git:
+        repo: 'https://github.com/CAA900-PRIME/blooddonation-frontend.git'
+        dest: /opt/frontend-config
+        version: main
+
+    - name: Clone backend repository
+      git:
+        repo: 'https://github.com/CAA900-PRIME/blooddonation-backend.git'
+        dest: /opt/backend-config
+        version: main
+
+    - name: Clone MySQL repository
+      git:
+        repo: 'https://github.com/CAA900-PRIME/blooddonation-mysql.git'
+        dest: /opt/mysql-config
+        version: main
+
+    - name: Build mysql image
+      community.docker.docker_image:
+        build:
+          path: /opt/mysql-config
+        name: mysql-blooddonation
+        tag: 5.7
+        push: false
+        source: build
+
+#    - name: Build FrontEnd image
+#     community.docker.docker_image:
+#       build:
+#         path: /opt/frontend-config
+#       name: frontend-blooddonation
+#       tag: 5.7
+#       push: false
+#       source: build
+
+    - name: Build BackEnd image
+      community.docker.docker_image:
+        build:
+          path: /opt/backend-config
+        name: backend-blooddonation
+        tag: 5.7
+        push: false
+        source: build
+
+    - name: Run MySQL container
+      docker_container:
+        name: mysql_container
+        image: mysql-blooddonation:5.7
+        state: started
+        restart_policy: always
+        env:
+          MYSQL_ROOT_PASSWORD: yourpassword
+          MYSQL_DATABASE: yourdatabase
+        published_ports:
+          - "3306:3306"
+
+#   - name: Run Frontend container
+#     docker_container:
+#       name: frontend_container
+#       image: frontend-blooddonation:5.7
+#       state: started
+#       restart_policy: always
+#       published_ports:
+#         - "5173:80"
+
+    - name: Run Backend container
+      docker_container:
+        name: backend_container
+        image: backend-blooddonation:5.7
+        state: started
+        restart_policy: always
+        published_ports:
+          - "3000:3000"

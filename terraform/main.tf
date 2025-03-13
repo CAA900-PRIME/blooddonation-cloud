@@ -79,7 +79,7 @@ resource "azurerm_linux_virtual_machine" "test" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = file("C:/Users/User/terraform-azure/id_rsa.pub")  
+    public_key = file("id_rsa.pub")  
   }
 
   disable_password_authentication = true
