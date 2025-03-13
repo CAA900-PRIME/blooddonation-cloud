@@ -110,6 +110,31 @@ ansible-playbook -i inventory.ini deploy_applications.yml
 
 ## Current plan
 
-The goal is to deploy a virtual machine in the cloud, install Docker, and run all services—such as the backend, frontend, and MySQL database—in containers.
+The objective is to deploy a virtual machine (VM) in the cloud, install Docker, and utilize Ansible to automate the deployment and management of services—such as the backend, frontend, and MySQL database—within Docker containers. This approach ensures a streamlined, consistent, and efficient deployment process.
 
-An alternative solution is to use multiple virtual machines, each running a separate service, but this approach would be overkill.
+
+Provision a Cloud VM:
+Deploy a VM instance using your chosen cloud provider (e.g., AWS, Azure, GCP).
+
+Install Docker on the VM:
+Use Ansible to automate the installation of Docker on the VM.
+Create an Ansible playbook that installs Docker and its dependencies.
+
+Develop Docker Images for Services:
+Create Dockerfiles for each service (backend, frontend, MySQL) defining their environments.
+Build and test these images locally before deployment.
+
+Push Docker Images to a Registry:
+Push the built images to a container registry (e.g., Docker Hub, AWS ECR) for accessibility.
+
+Create Ansible Playbooks for Deployment:
+Develop playbooks to pull the Docker images from the registry and run them as containers on the VM.
+Define tasks to manage container orchestration, networking, and environment variables.
+
+Execute Ansible Playbooks:
+Run the playbooks to automate the deployment of services within Docker containers on the VM.
+Ensure proper sequencing and dependencies are managed.
+
+Monitor and Maintain Services:
+Implement monitoring solutions to track the health and performance of the services.
+Use Ansible for ongoing configuration management and updates.
