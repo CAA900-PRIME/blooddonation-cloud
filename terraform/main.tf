@@ -190,14 +190,14 @@ resource "azurerm_network_security_rule" "allow_ssh" {
 
 
 # Associate NSG with the network interface
-resource "aazurerm_network_interface_security_group_associationzurerm_network_interface_security_group_association" "assoc1" {
+resource "azurerm_network_interface_security_group_association" "assoc2" {
   network_interface_id      = azurerm_network_interface.vm1.id
   network_security_group_id = azurerm_network_security_group.test.id
 }
 
 # Associate NSG with the network interface
 resource "azurerm_network_interface_security_group_association" "assoc2" {
-  network_interface_id      = azurerm_network_interface.vm22.id
+  network_interface_id      = azurerm_network_interface.vm2.id
   network_security_group_id = azurerm_network_security_group.test.id
 }
 
