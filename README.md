@@ -74,7 +74,7 @@ terraform apply --auto-approve
 Connect to Azure VM
 
 ```bash
-ssh -i bd_key ubuntu@ip-address
+ssh -i bd_key azureu@ip-address
 ```
 
 After loging in, will start the following servers:
@@ -91,6 +91,22 @@ Will ues [tmux](https://github.com/tmux/tmux/wiki) to manage and run all server 
 4. `terraform validate` validates the configuration files for syntax errors.
 5. `terraform fmt` Formatting the file.
 6. `terraform destroy` Destroyes all the resources managed by the current configuration.
+
+
+Ansible Control Node (linux fully operated inside windows machine )
+
+install Ansible 
+
+```bash
+sudo apt update
+sudo apt install ansible -y
+```
+
+Execute the Ansible Playbook
+
+```bash
+ansible-playbook -i inventory.ini deploy_applications.yml
+```
 
 ## Current plan
 
