@@ -33,33 +33,33 @@ resource "azurerm_subnet" "test" {
 }
 
 
-resource "azurerm_public_ip" "test" {
-  name                = "myPublicIP"
+resource "azurerm_public_ip" "vm1" {
+  name                = "vm1PublicIP"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
   allocation_method   = "Dynamic"
 }
 
 
-resource "azurerm_network_interface" "test" {
-  name                = "myNIC"
+resource "azurerm_network_interface" "vm1" {
+  name                = "vm1NIC"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
 
   ip_configuration {
-    name                          = "myIPConfig"
+    name                          = "vm1IPConfig"
     subnet_id                     = azurerm_subnet.test.id
-    public_ip_address_id          = azurerm_public_ip.test.id
+    public_ip_address_id          = azurerm_public_ip.vm1.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
 
-resource "azurerm_linux_virtual_machine" "test" {
-  name                = "myAzureVM"
+resource "azurerm_linux_virtual_machine" "vm1" {
+  name                = "vm1"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
-  network_interface_ids = [azurerm_network_interface.test.id]
+  network_interface_ids = [azurerm_network_interface.vm1.id]
   size                = "Standard_B1s"
 
   os_disk {
@@ -74,12 +74,62 @@ resource "azurerm_linux_virtual_machine" "test" {
     version   = "latest"
   }
 
-  computer_name  = "myvm"
+  computer_name  = "vm1"
   admin_username = "azureuser"
 
   admin_ssh_key {
     username   = "azureuser"
     public_key = file("id_rsa.pub")  
+  }
+
+  disable_password_authentication = true
+}
+
+resource "azurerm_public_ip" "vm2" {
+  name                = "vm2PublicIP"
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+  allocation_method   = "Dynamic"
+}
+
+resource "azurerm_network_interface" "vm2" {
+  name                = "vm2NIC"
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+
+  ip_configuration {
+    name                          = "vm2IPConfig"
+    subnet_id                     = azurerm_subnet.test.id
+    public_ip_address_id          = azurerm_public_ip.vm2.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+resource "azurerm_linux_virtual_machine" "vm2" {
+  name                = "vm2"
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+  network_interface_ids = [azurerm_network_interface.vm2.id]
+  size                = "Standard_B1s"
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server"
+    version   = "latest"
+  }
+
+  computer_name  = "vm2"
+  admin_username = "azureuser"
+
+  admin_ssh_key {
+    username   = "azureuser"
+    public_key = file("id_rsa.pub")
   }
 
   disable_password_authentication = true
