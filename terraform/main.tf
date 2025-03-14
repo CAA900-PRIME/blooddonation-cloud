@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 terraform {
   required_providers {
     azurerm = {
