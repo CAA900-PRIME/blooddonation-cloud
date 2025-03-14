@@ -8,7 +8,7 @@ terraform {
 }
 
 provider "azurerm" {
-  features {}
+  fazurerm_network_interface_security_group_associationeatures {}
   subscription_id = ""
 }
 
@@ -17,7 +17,7 @@ resource "azurerm_resource_group" "test" {
   location = "East US"
 }
 
-# Create the Virtual Network
+
 resource "azurerm_virtual_network" "test" {
   name                = "myVNet"
   location            = azurerm_resource_group.test.location
@@ -25,7 +25,7 @@ resource "azurerm_virtual_network" "test" {
   address_space       = ["10.0.0.0/16"]
 }
 
-# Create a Subnet
+
 resource "azurerm_subnet" "test" {
   name                 = "mySubnet"
   resource_group_name  = azurerm_resource_group.test.name
@@ -33,36 +33,35 @@ resource "azurerm_subnet" "test" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-# Create a Public IP
-resource "azurerm_public_ip" "test" {
-  name                = "myPublicIP"
+
+resource "azurerm_public_ip" "vm1" {
+  name                = "vm1PublicIP"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
-  allocation_method   = "Static"
-  sku                 = "Basic"
+  allocation_method   = "Dynamic"
 }
 
-# Create the Network Interface
-resource "azurerm_network_interface" "test" {
-  name                = "myNIC"
+
+resource "azurerm_network_interface" "vm1" {
+  name                = "vm1NIC"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
 
   ip_configuration {
-    name                          = "myIPConfig"
+    name                          = "vm1IPConfig"
     subnet_id                     = azurerm_subnet.test.id
-    public_ip_address_id          = azurerm_public_ip.test.id
+    public_ip_address_id          = azurerm_public_ip.vm1.id
     private_ip_address_allocation = "Dynamic"
   }
 }
 
-# Create the Linux Virtual Machine
-resource "azurerm_linux_virtual_machine" "test" {
-  name                  = "myAzureVM"
+
+resource "azurerm_linux_virtual_machine" "vm1" {
+  name                  = "vm1"
   location              = azurerm_resource_group.test.location
   resource_group_name   = azurerm_resource_group.test.name
-  network_interface_ids = [azurerm_network_interface.test.id]
-  size                  = "Standard_B2s"
+  network_interface_ids = [azurerm_network_interface.vm1.id]
+  size                  = "Standard_B1s"
 
   os_disk {
     caching              = "ReadWrite"
@@ -76,42 +75,66 @@ resource "azurerm_linux_virtual_machine" "test" {
     version   = "latest"
   }
 
-  computer_name  = "myvm"
-  admin_username = "ubuntu"
+  computer_name  = "vm1"
+  admin_username = "azureuser"
 
   admin_ssh_key {
-    username   = "ubuntu"
-    public_key = file("bd_key.pub") # Ensure this file exists and correct name
+    username   = "azureuser"
+    public_key = file("id_rsa.pub")
   }
 
   disable_password_authentication = true
-  depends_on                      = [azurerm_public_ip.test]
+}
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update -y",
-      "sudo apt-get upgrade -y",
-      "sudo apt-get install -y docker.io",
-      "sudo apt-get install -y vim",
-      "sudo apt-get install -y tmux",
-      "sudo apt install -y python3 python3-pip python3-venv python3-dev",
-      "sudo apt-get install -y nodejs",
-      "echo 'export TERM=xterm-256color' >> ~/.bashrc", # To enable tmux
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker",
-      "sudo usermod -aG docker ubuntu"
-    ]
+resource "azurerm_public_ip" "vm2" {
+  name                = "vm2PublicIP"
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+  allocation_method   = "Dynamic"
+}
 
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("bd_key")
-      host        = azurerm_public_ip.test.ip_address
-      timeout     = "5m"
-    }
+resource "azurerm_network_interface" "vm2" {
+  name                = "vm2NIC"
+  location            = azurerm_resource_group.test.location
+  resource_group_name = azurerm_resource_group.test.name
+
+  ip_configuration {
+    name                          = "vm2IPConfig"
+    subnet_id                     = azurerm_subnet.test.id
+    public_ip_address_id          = azurerm_public_ip.vm2.id
+    private_ip_address_allocation = "Dynamic"
   }
 }
 
+resource "azurerm_linux_virtual_machine" "vm2" {
+  name                  = "vm2"
+  location              = azurerm_resource_group.test.location
+  resource_group_name   = azurerm_resource_group.test.name
+  network_interface_ids = [azurerm_network_interface.vm2.id]
+  size                  = "Standard_B1s"
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "ubuntu-24_04-lts"
+    sku       = "server"
+    version   = "latest"
+  }
+
+  computer_name  = "vm2"
+  admin_username = "azureuser"
+
+  admin_ssh_key {
+    username   = "azureuser"
+    public_key = file("id_rsa.pub")
+  }
+
+  disable_password_authentication = true
+}
 
 # Create Network Security Group (NSG)
 resource "azurerm_network_security_group" "test" {
@@ -167,8 +190,14 @@ resource "azurerm_network_security_rule" "allow_ssh" {
 
 
 # Associate NSG with the network interface
-resource "azurerm_network_interface_security_group_association" "test" {
-  network_interface_id      = azurerm_network_interface.test.id
+resource "aazurerm_network_interface_security_group_associationzurerm_network_interface_security_group_association" "assoc1" {
+  network_interface_id      = azurerm_network_interface.vm1.id
+  network_security_group_id = azurerm_network_security_group.test.id
+}
+
+# Associate NSG with the network interface
+resource "azurerm_network_interface_security_group_association" "assoc2" {
+  network_interface_id      = azurerm_network_interface.vm22.id
   network_security_group_id = azurerm_network_security_group.test.id
 }
 
