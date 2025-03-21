@@ -3,15 +3,20 @@ This web application is designed to simplify blood donation by directly connecti
 
 The goal is to make the donation process faster and more efficient, reducing the time involved in finding a suitable donor. The platform prioritizes simplicity, ensuring a user-friendly experience with minimal steps.
 
-### Topology
-![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/digram.jpeg)
+Before starting deploying the instances, there are two ways to do this, either using a single virtual machine or dual wtih ansible, which one of the `vm` will be the control node, and the second `vm` will be the worker node. 
+
+Below are two different topologies of each infrastructure we are using.
+### Single Virtual Machine | Topology
+![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/single_vm/topology.jpg)
+
+### Dual Virtual Machine Using Ansible | Topology
+![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/dual_vm_ansible/topology.jpg)
 
 ## Prerequisites
 - [Terraform](https://www.terraform.io/downloads.html) installed
 - Cloud provider credentials set up (e.g., AWS, GCP, Azure)
 
 ## Init & Setup
-
 First will have to clone this repository
 
 >[!NOTE]
@@ -48,10 +53,13 @@ provider "azurerm" {
 }
 ```
 
-Change the working directory to `terrform/` 
+>[!NOTE]
+>As this repository holds two different infrastrucutres, the default option will be using a single virtual machine. The other option is using 2 virtual machines and ansible. Don't forget to configure the `main.tf` files.
+
+Change the working directory to `terrform/single_vm` 
 
 ```bash
-cd terraform
+cd terraform/single_vm
 ```
 
 Initialize and downloads provider plugins and sets up the backend for storing state.
@@ -93,7 +101,7 @@ Will ues [tmux](https://github.com/tmux/tmux/wiki) to manage and run all server 
 6. `terraform destroy` Destroyes all the resources managed by the current configuration.
 
 
-Ansible Control Node (linux fully operated inside windows machine )
+### Ansible Control Node
 
 install Ansible 
 
@@ -113,28 +121,28 @@ ansible-playbook -i inventory.ini deploy_applications.yml
 The objective is to deploy a virtual machine (VM) in the cloud, install Docker, and utilize Ansible to automate the deployment and management of services—such as the backend, frontend, and MySQL database—within Docker containers. This approach ensures a streamlined, consistent, and efficient deployment process.
 
 
-Provision a Cloud VM:
+### Provision a Cloud VM:
 Deploy a VM instance using your chosen cloud provider (e.g., AWS, Azure, GCP).
 
-Install Docker on the VM:
+### Install Docker on the VM:
 Use Ansible to automate the installation of Docker on the VM.
 Create an Ansible playbook that installs Docker and its dependencies.
 
-Develop Docker Images for Services:
+### Develop Docker Images for Services:
 Create Dockerfiles for each service (backend, frontend, MySQL) defining their environments.
 Build and test these images locally before deployment.
 
-Push Docker Images to a Registry:
+### Push Docker Images to a Registry:
 Push the built images to a container registry (e.g., Docker Hub, AWS ECR) for accessibility.
 
-Create Ansible Playbooks for Deployment:
+### Create Ansible Playbooks for Deployment:
 Develop playbooks to pull the Docker images from the registry and run them as containers on the VM.
 Define tasks to manage container orchestration, networking, and environment variables.
 
-Execute Ansible Playbooks:
+### Execute Ansible Playbooks:
 Run the playbooks to automate the deployment of services within Docker containers on the VM.
 Ensure proper sequencing and dependencies are managed.
 
-Monitor and Maintain Services:
+### Monitor and Maintain Services:
 Implement monitoring solutions to track the health and performance of the services.
 Use Ansible for ongoing configuration management and updates.
