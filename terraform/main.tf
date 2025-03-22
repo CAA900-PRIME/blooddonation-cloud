@@ -12,11 +12,7 @@ terraform {
 provider "azurerm" {
   features {}
   subscription_id = "f194cbb4-f8a3-46cc-b71e-f0b4b0b2c17c"
-      version = "=4.1.0"
-    }
-  }
 }
-
 
 resource "azurerm_resource_group" "test" {
   name     = "myResourceGroup"
