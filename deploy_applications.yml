@@ -1,3 +1,4 @@
+## TODO: Need to update mysql password, Need to uncomment front-end code
 ---
 - name: Deploy Applications on Azure VM
   hosts: azure
