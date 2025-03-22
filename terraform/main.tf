@@ -2,14 +2,16 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=4.1.0"
+      version = "~>4.24.0"
     }
   }
+
+  required_version = "~> 1.11.2"
 }
 
 provider "azurerm" {
-  fazurerm_network_interface_security_group_associationeatures {}
-  subscription_id = ""
+  features {}
+  subscription_id = "f194cbb4-f8a3-46cc-b71e-f0b4b0b2c17c"
 }
 
 resource "azurerm_resource_group" "test" {
@@ -33,12 +35,14 @@ resource "azurerm_subnet" "test" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
+# Create a Public IP
 
 resource "azurerm_public_ip" "vm1" {
   name                = "vm1PublicIP"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  sku                 = "Basic"
 }
 
 
@@ -90,7 +94,8 @@ resource "azurerm_public_ip" "vm2" {
   name                = "vm2PublicIP"
   location            = azurerm_resource_group.test.location
   resource_group_name = azurerm_resource_group.test.name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  sku                 = "Basic"
 }
 
 resource "azurerm_network_interface" "vm2" {
@@ -190,7 +195,7 @@ resource "azurerm_network_security_rule" "allow_ssh" {
 
 
 # Associate NSG with the network interface
-resource "azurerm_network_interface_security_group_association" "assoc2" {
+resource "azurerm_network_interface_security_group_association" "assoc1" {
   network_interface_id      = azurerm_network_interface.vm1.id
   network_security_group_id = azurerm_network_security_group.test.id
 }
@@ -202,7 +207,12 @@ resource "azurerm_network_interface_security_group_association" "assoc2" {
 }
 
 ## OUTPUT IP
-output "public_ip" {
-  value       = azurerm_public_ip.test.ip_address
-  description = "The public IP address of the virtual machine"
+output "public_ip1" {
+  value       = azurerm_public_ip.vm1.ip_address
+  description = "The public IP address of the virtual machine 1"
+}
+
+output "public_ip2" {
+  value       = azurerm_public_ip.vm2.ip_address
+  description = "The public IP address of the virtual machine 2"
 }
