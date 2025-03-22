@@ -10,7 +10,7 @@ Below are two different topologies of each infrastructure we are using.
 ![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/single_vm/topology.jpg)
 
 ### Dual Virtual Machine Using Ansible | Topology
-![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/dual_vm_ansible/topology.jpg)
+
 
 ## Prerequisites
 - [Terraform](https://www.terraform.io/downloads.html) installed
