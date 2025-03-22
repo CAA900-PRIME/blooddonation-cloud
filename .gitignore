@@ -21,9 +21,9 @@ crash.log
 Thumbs.db
 Desktop.ini
 
-.pub
+*.pub
 
-bd_key*
+id_rsa
 
 
 # Editor-specific files
