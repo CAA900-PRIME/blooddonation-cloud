@@ -3,13 +3,24 @@ This web application is designed to simplify blood donation by directly connecti
 
 The goal is to make the donation process faster and more efficient, reducing the time involved in finding a suitable donor. The platform prioritizes simplicity, ensuring a user-friendly experience with minimal steps.
 
+Before starting deploying the instances, there are two ways to do this, either using a single virtual machine or dual wtih ansible, which one of the `vm` will be the control node, and the second `vm` will be the worker node. 
+
+Below are two different topologies of each infrastructure we are using.
+### Single Virtual Machine | Topology
+![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/single_vm/topology.jpg)
+
+### Dual Virtual Machine Using Ansible | Topology
+![](https://github.com/CAA900-PRIME/blooddonation-cloud/blob/main/terraform/dual_vm_ansible/topology.jpg)
+
 ## Prerequisites
 - [Terraform](https://www.terraform.io/downloads.html) installed
 - Cloud provider credentials set up (e.g., AWS, GCP, Azure)
 
 ## Init & Setup
-
 First will have to clone this repository
+
+>[!NOTE]
+>For nginx setup instructions go [here](https://github.com/CAA900-PRIME/blooddonation-cloud/tree/main/nginx)
 
 ```bash
 git clone git@github.com:CAA900-PRIME/blooddonation-cloud.git
@@ -21,10 +32,34 @@ git clone git@github.com:CAA900-PRIME/blooddonation-cloud.git
 >2. Configure Azure locally and ensure connectin to the azure api.
 >3. Azure CLI [Documentation](https://learn.microsoft.com/en-us/cli/azure/)
 
-Change the working directory to `terrform/` 
+Generate SSH key 
+```bash
+ssh-keygen -t rsa -b 4096 -f ./bd_key
+```
+
+Will also need to login to Azure using Azure CLI before using terraform. To login using azure cli:
 
 ```bash
-cd terraform
+az login
+```
+
+A web page will open in a new tab, must login manually. Next, will need to modify the subscription id within 
+
+```terraform 
+# Configure the Microsoft Azure Provider
+provider "azurerm" {
+  features {}
+  subscription_id = "" # Must be provided
+}
+```
+
+>[!NOTE]
+>As this repository holds two different infrastrucutres, the default option will be using a single virtual machine. The other option is using 2 virtual machines and ansible. Don't forget to configure the `main.tf` files.
+
+Change the working directory to `terrform/single_vm` 
+
+```bash
+cd terraform/single_vm
 ```
 
 Initialize and downloads provider plugins and sets up the backend for storing state.
@@ -44,14 +79,70 @@ And to apply the changes required to reach the desired state defined in the conf
 ```bash
 terraform apply --auto-approve
 ```
+Connect to Azure VM
 
-Here are other terraform list of commands:
-1. `terraform validate` validates the configuration files for syntax errors.
-2. `terraform fmt` Formatting the file.
-3. `terraform destroy` Destroyes all the resources managed by the current configuration.
+```bash
+ssh -i bd_key azureu@ip-address
+```
+
+After loging in, will start the following servers:
+1. Running mysql through docker.
+2. Running the backend
+3. Running the frontend
+
+Will ues [tmux](https://github.com/tmux/tmux/wiki) to manage and run all server processes in detached sessions, ensuring that they continue running even if the connection is lost.
+
+##### Terraform list of commands:
+1. `terraform init` Initialize terraform
+2. `terraform plan` Show what its going to be built before applying the changes.
+3. `terraform apply --auto-approve` Apply the changes to the cloud.
+4. `terraform validate` validates the configuration files for syntax errors.
+5. `terraform fmt` Formatting the file.
+6. `terraform destroy` Destroyes all the resources managed by the current configuration.
+
+
+### Ansible Control Node
+
+install Ansible 
+
+```bash
+sudo apt update
+sudo apt install ansible -y
+```
+
+Execute the Ansible Playbook
+
+```bash
+ansible-playbook -i inventory.ini deploy_applications.yml
+```
 
 ## Current plan
 
-The goal is to deploy a virtual machine in the cloud, install Docker, and run all services—such as the backend, frontend, and MySQL database—in containers.
+The objective is to deploy a virtual machine (VM) in the cloud, install Docker, and utilize Ansible to automate the deployment and management of services—such as the backend, frontend, and MySQL database—within Docker containers. This approach ensures a streamlined, consistent, and efficient deployment process.
 
-An alternative solution is to use multiple virtual machines, each running a separate service, but this approach would be overkill.
+
+### Provision a Cloud VM:
+Deploy a VM instance using your chosen cloud provider (e.g., AWS, Azure, GCP).
+
+### Install Docker on the VM:
+Use Ansible to automate the installation of Docker on the VM.
+Create an Ansible playbook that installs Docker and its dependencies.
+
+### Develop Docker Images for Services:
+Create Dockerfiles for each service (backend, frontend, MySQL) defining their environments.
+Build and test these images locally before deployment.
+
+### Push Docker Images to a Registry:
+Push the built images to a container registry (e.g., Docker Hub, AWS ECR) for accessibility.
+
+### Create Ansible Playbooks for Deployment:
+Develop playbooks to pull the Docker images from the registry and run them as containers on the VM.
+Define tasks to manage container orchestration, networking, and environment variables.
+
+### Execute Ansible Playbooks:
+Run the playbooks to automate the deployment of services within Docker containers on the VM.
+Ensure proper sequencing and dependencies are managed.
+
+### Monitor and Maintain Services:
+Implement monitoring solutions to track the health and performance of the services.
+Use Ansible for ongoing configuration management and updates.
